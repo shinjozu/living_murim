@@ -1,8 +1,8 @@
 {
   "build": "25.0.0",
   "schemaVersion": 4,
-  "cache": "living-murim-refined-25.0.0-2f6d49f6fa91",
+  "cache": "living-murim-refined-25.0.0-ef752be66e8e",
   "assets": 380,
-  "runtimeBytes": 21943116,
+  "runtimeBytes": 21943119,
   "collection": "Only entry-point modules/styles, manifest icons, literal runtime references and enumerated authoritative art URLs. No tools, source masters or archived assets."
 }

@@ -1,4 +1,4 @@
-const CACHE="living-murim-refined-25.0.0-2f6d49f6fa91";
+const CACHE="living-murim-refined-25.0.0-ef752be66e8e";
 const ASSETS=[
   "./",
   "./art.js",

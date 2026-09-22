@@ -13,7 +13,7 @@
  }
  function resolve(S,text,intent,{allowGeneric=true}={}){
   const f=focus(text,intent),q=f.value.toLowerCase().split(/\s+(?:not|rather than|instead of|near|beside|next to|before|after|while|who|that|protecting|guarding|threatening|attacking|from)\s+/)[0].replace(/[,;]\s*$/,''),people=all(S),here=people.filter(n=>n.location===S.world.location),current=active(S),fail=message=>({ok:false,clarification:message});
-  if(intent==='treat'&&/\b(?:myself|my (?:wound|injur|body)|self)\b/i.test(q))return {ok:true,type:'self',id:null};
+  if(intent==='treat'&&/\b(?:myself|my (?:wound|injur|body)\w*|self)\b/i.test(q))return {ok:true,type:'self',id:null};
   let matches=people.filter(n=>has(q,n.name));
   // Full names outrank first-name aliases; unique aliases still work when the person is elsewhere.
   if(!matches.length)matches=people.filter(n=>has(q,n.id)||n.name.split(' ').filter(w=>w.length>=3).some(w=>has(q,w)));
