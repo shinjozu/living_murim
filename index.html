@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#06090d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Living Murim">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png">
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./layout.css">
+<link rel="stylesheet" href="./guild.css">
+<link rel="stylesheet" href="./pets.css">
+<title>Living Murim — A World That Remembers</title>
+<link rel="stylesheet" href="./equipment.css">
+<link rel="stylesheet" href="combat-art.css"></head>
+<body class="v24">
+<div id="app">
+  <header>
+    <div class="brand"><b>Living Murim</b><small id="subtitle">A world that remembers</small></div>
+    <div class="meters"><span id="realm">Mortal</span><span id="clock">Day 1 • Dawn</span></div>
+  </header>
+
+  <nav id="nav" aria-label="Game sections">
+    <button data-view="story" class="active">Story</button>
+    <button data-view="character">Character</button>
+    <button data-view="arts">Techniques</button>
+    <button data-view="bag">Inventory</button>
+    <button data-view="life">Craft & Life</button>
+    <button data-view="world">World</button>
+    <button data-view="people">People</button>
+    <button data-view="journal">Journal</button>
+    <button data-view="compendium">Compendium</button>
+  </nav>
+
+  <main id="main">
+    <section id="creation" class="panel">
+      <div class="eyebrow">A THOUSAND PATHS. YOUR OWN STORY.</div>
+      <h1>Create your legend.</h1>
+      <p class="prose">A name, a beginning, and the choices you make. The Jianghu will remember.</p>
+      <label>Character name<input id="name" maxlength="24" placeholder="Enter a name"></label>
+      <div id="fates"></div>
+      <section id="appearanceCreator" class="appearanceCreator" aria-label="Character appearance creator">
+        <div class="appearanceIntro"><span class="eyebrow">YOUR CHARACTER</span><h2>Shape your legend.</h2></div>
+        <div class="appearanceWorkbench">
+          <div id="appearancePreview" class="appearancePreview" aria-live="polite"></div>
+          <div class="appearanceControls">
+            <label>Body Template<select id="bodyTemplate"><option value="male">Masculine</option><option value="female">Feminine</option></select></label>
+            <fieldset><legend>Face style</legend><div id="faceChoices" class="appearanceChoices"></div></fieldset>
+            <fieldset><legend>Hair style</legend><div id="hairChoices" class="appearanceChoices"></div></fieldset>
+            <fieldset><legend>Robe palette</legend><div id="paletteChoices" class="paletteChoices"></div></fieldset>
+            <fieldset><legend>Expression preview</legend><div id="expressionChoices" class="expressionChoices"></div></fieldset>
+          </div>
+        </div>
+      </section>
+      <button id="begin" class="primary" disabled>Begin your journey</button>
+    </section>
+
+    <section id="game" class="panel hidden">
+      <div id="storyView" class="view">
+        <div id="sceneStage" class="sceneStage">
+          <div class="sceneHead"><span id="location">Awakening Hall</span><span id="sceneMeta"></span></div>
+          <div id="sceneActor" class="sceneActor" aria-hidden="true"></div>
+          <div id="sceneAtmosphere" class="sceneAtmosphere"></div>
+        </div>
+        <div class="storyColumns"><div class="storyConversation">
+        <article id="narrative" class="prose"></article>
+        <div id="speaker" class="speaker hidden"></div>
+        <div id="impact" class="impact hidden"></div>
+        <section id="chatHost" aria-label="Your conversation"></section>
+        <form id="customForm">
+          <label class="chatInputLabel" for="customAction">What will you do?</label>
+          <textarea id="customAction" maxlength="1200" rows="2" autocomplete="off" placeholder="Speak, act, or ask… Your next step is yours."></textarea>
+          <button class="primary" type="submit">Send <span aria-hidden="true">↗</span></button>
+        </form>
+        <button id="guildStoryBtn" type="button">Wanderers’ Guild · contracts & bounties</button>
+        <details id="storyPowers"><summary>Your powers</summary><div id="storyPowerActions"></div></details>
+        <details id="suggestedActions" class="suggestedActions" open><summary>Suggested approaches</summary><div id="choices"></div></details>
+        </div><aside id="sceneAside" class="sceneAside" aria-label="Around you"></aside></div>
+      </div>
+      <div id="altView" class="view hidden"></div>
+    </section>
+  </main>
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modalCard"><div id="modalBody"></div><button id="modalClose">Close</button></div>
+  </div>
+  <footer><span id="status">Local save ready</span><button id="helpBtn">Ask Cookie</button><button id="saveBtn">Save</button><button id="prefsBtn">Settings</button><button id="exportBtn">Export</button><button id="importBtn">Import</button><input id="importFile" type="file" accept="application/json,.json" hidden><button id="resetBtn">New journey</button></footer>
+</div>
+<script src="./art/characters/outfits/metadata.js"></script>
+<script src="./art.js"></script>
+<script src="./motion.js"></script><script src="./combat-art.js"></script>
+<script src="./guide.js"></script>
+<script src="./data.js"></script>
+<script src="./equipment.js"></script>
+<script src="./progression.js"></script>
+<script src="./items.js"></script>
+<script src="./powers.js"></script>
+<script src="./guild.js"></script>
+<script src="./pets.js"></script>
+<script src="./encounters.js"></script>
+<script src="./encounter-art.js"></script>
+<script src="./sound.js"></script>
+<script src="./narrative.js"></script>
+<script src="./chat-ui.js"></script>
+<script src="./choreography.js"></script>
+<script src="./game.js"></script>
+</body>
+</html>

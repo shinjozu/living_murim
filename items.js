@@ -1,0 +1,49 @@
+/* Inventory items have local, checkable sources. Reading never grants free mastery. */
+(function(root){'use strict';
+const E=root.MURIM_EQUIPMENT,P=root.MURIM_PROGRESSION;
+const rows=[
+['minor-meridian-manual','Minor Meridian Manual','Tome',55,'Learn Minor Meridian Sweep. Use the breathing method to gain mastery.',{art:'Basic Meridian Breathing',technique:'Minor Meridian Sweep',realm:0}],
+['empty-peak-manual','Empty Peak Manual','Tome',65,'Learn Empty Peak Guard. Mastery comes from receiving actual attacks.',{art:'Cloudveil Sword Foundation',technique:'Empty Peak Guard',realm:0}],
+['winter-moon-scroll','Winter Moon Scroll','Tome',110,'Learn Winter Moon Draw at Third-Rate realm. Mastery comes through sword exchanges.',{art:'Frostblade Intent',technique:'Winter Moon Draw',realm:1}],
+['wayfarer-staff-manual','Wayfarer Staff Manual','Tome',95,'Learn Wayfarer Staff Sweep at Third-Rate realm. Develop it through real combat.',{art:'Wayfarer Beggar Art',technique:'Wayfarer Staff Sweep',realm:1}],
+['jade-clarity-pill','Jade Clarity Pill','Consumable',46,'After earning enough insight, restores up to 12 foundation toward the next breakthrough requirement.',{effect:'foundation'}],
+['still-water-pill','Still Water Pill','Consumable',42,'After earning enough insight, restores up to 15 stability toward the breakthrough requirement.',{effect:'stability'}],
+['meridian-mending-pill','Meridian Mending Pill','Consumable',56,'Treat one actual injury and recover 18 HP. Cannot be used without an injury.',{effect:'injury'}],
+['moon-lotus','Moon Lotus','Material',30,'A rare waterside herb used for clarity medicine. Search suitable herb beds.',{}],
+['snow-ginseng','Snow Ginseng','Material',38,'A rare alpine root used to mend meridians and restore circulation.',{}],
+['cinder-orchid','Cinder Orchid','Material',32,'A heat-loving ruin flower used in cleansing incense.',{}],
+['jade-moss','Jade Moss','Material',24,'Medicinal river moss used in stabilizing pills.',{}],
+['dewstone','Dewstone','Consumable',28,'Release stored dew-Qi to recover 18 Qi; requires at least 12 Qi already spent.',{effect:'qi'}],
+['cleansing-incense','Cleansing Incense','Consumable',30,'Burn a prepared stick to reduce existing meridian deviation by up to 8.',{effect:'deviation'}],
+['spirit-ink','Spirit Ink','Material',35,'Prepared mineral ink used in protective talismans and fine spirit gear.',{}],
+['healing-salve','Healing Salve','Consumable',10,'Treat one injury and restore 30 HP.',{effect:'legacy'}],
+['qi-restoration-pill','Qi Restoration Pill','Consumable',12,'Restore 30 Qi after exertion.',{effect:'legacy'}]
+];
+const catalog=rows.map(([id,name,type,buy,description,use],index)=>({id,name,type,buy,sell:Math.max(1,Math.floor(buy*.38)),description,desc:description,use,icon:`./art/items/${id}.webp`,iconIndex:index}));
+const byKey=Object.assign(Object.create(null),Object.fromEntries(catalog.flatMap(c=>[[c.id,c],[c.name,c]])));const get=key=>byKey[key]||null;
+E.registerItems(catalog);
+function ensure(S){const p=S.player;p.itemHistory??={version:1,attempts:[],gifts:{},studied:{},days:{}};const h=p.itemHistory;h.version=1;for(const k of ['gifts','studied','days'])if(!h[k]||typeof h[k]!=='object'||Array.isArray(h[k]))h[k]={};h.attempts=Array.isArray(h.attempts)?h.attempts.filter(x=>typeof x==='string').slice(-256):[];return h;}
+function acquire(S,id,quantity=1){const c=get(id);return !!c&&E.acquire(S.player,c.id,quantity,c.type);}
+function use(S,id,{techniques}={}){const c=get(id),p=S.player,fail=reason=>({ok:false,reason});if(!c||!E.quantity(p,c.id))return fail('That item is not in your belongings.');if(S.combat||S.flow?.mode==='reaction'||S.player.chat?.pending||S.chat?.pending)return fail('Finish the current action first.');const u=c.use,cl=p.cultivation;
+ if(c.type==='Tome'){
+  if(!techniques?.[u.technique]||techniques[u.technique].art!==u.art)return fail('This manual has no verified technique entry.');if(p.realm<u.realm)return fail(`Reach ${P.REALMS[u.realm]} before studying this method.`);if(p.arts[u.art]?.tech?.includes(u.technique))return fail('You already know this method. Use it in play to develop mastery; the spare manual remains yours.');
+  if(!p.arts[u.art])p.arts[u.art]={tech:[],mastery:0,proficiency:{}};P.initialize(p);const result=P.acquire(p,'technique',u.technique,{art:u.art,source:c.name});if(!result.ok)return result;E.consume(p,c.id);ensure(S).studied[c.id]={day:S.world.day,technique:u.technique};S.actionNo++;return {ok:true,item:c.name,technique:u.technique,text:`You study ${c.name} and learn ${u.technique}. The annotated manual is committed to your library. Mastery starts at 1/10 and develops through use.`,kind:'study'};
+ }
+ if(['foundation','stability'].includes(u.effect)){const status=P.breakthroughStatus(p);if(status.final||p.realmXP<P.THRESHOLDS[p.realm+1])return fail('Earn the next realm’s cultivation insight through play before using a breakthrough aid.');const req=status.requirements.find(x=>x.key===u.effect);if(req.met)return fail('This breakthrough requirement is already satisfied. Save the medicine.');const n=Math.min(u.effect==='foundation'?12:15,req.need-cl[u.effect]);E.consume(p,c.id);cl[u.effect]+=n;S.actionNo++;return {ok:true,kind:'aid',text:`${c.name} restores ${n} ${u.effect}. Your earned insight and skill mastery stay unchanged; choose the breakthrough deliberately when ready.`};}
+ if(u.effect==='injury'){if(!p.injuries.length)return fail('There is no injury for this medicine to treat.');const injury=p.injuries.shift();p.hp=Math.min(p.maxHp,p.hp+18);E.consume(p,c.id);S.actionNo++;return {ok:true,kind:'medicine',treated:true,text:`${c.name} treats ${injury.name} and restores up to 18 HP.`};}
+ if(u.effect==='qi'){if(p.maxQi-p.qi<12)return fail('Spend at least 12 Qi before using this stored energy.');const n=Math.min(18,p.maxQi-p.qi);p.qi+=n;E.consume(p,c.id);S.actionNo++;return {ok:true,kind:'recovery',text:`The Dewstone releases ${n} Qi, then turns dull. One stone is consumed.`};}
+ if(u.effect==='deviation'){if(cl.deviation<=0)return fail('Your circulation has no deviation to cleanse.');const n=Math.min(8,cl.deviation);cl.deviation-=n;E.consume(p,c.id);S.actionNo++;return {ok:true,kind:'recovery',text:`The incense burns away. Existing meridian deviation falls by ${n}.`};}
+ return fail(c.type==='Material'?'Use this material in an appropriate recipe.':'Use the ordinary medicine control.');
+}
+const hash=s=>{let n=2166136261;for(const c of String(s))n=Math.imul(n^c.charCodeAt(0),16777619);return n>>>0;};
+const herbLocations={'Hundred Herb Valley':['moon-lotus','jade-moss'],'Jade River City':['jade-moss','moon-lotus'],'Frostblade Peak':['snow-ginseng'],'Red Moon Ruins':['cinder-orchid'],'Cloudveil Sect':['jade-moss']};
+function resolveReward(S,proof={}){const none={ok:false,items:[],text:''};if(!proof.meaningful||proof.success!==true)return none;const p=S.player,day=S.world.day,loc=S.world.location;let key,pool,chance=1,source,dayKey,n;
+ if(proof.kind==='gather'){if(proof.activity!=='forage'||proof.produced<1||proof.fatiguePaid<1||proof.location!==loc||!herbLocations[loc])return none;dayKey=`herb:${loc}`;key=`herb:${loc}:${day}`;pool=herbLocations[loc];chance=Math.min(.5,.15+(p.lifeSkills.Herbalism?.v||1)*.015);source=`Among the herbs you actually gathered in ${loc}`;}
+ else if(proof.kind==='victory'){const c=proof.combat,record=c?.encounter&&S.world.encounters?.records.find(x=>x.id===c.encounter.id);if(proof.won!==true||c?.enemyHp>0||c?.round<2||record?.archetype!=='bandit'||record.location!==loc||record.defeats<1)return none;key=`salvage:${record.id}`;dayKey='bandit-salvage';pool=['healing-salve','dewstone','spirit-ink','iron-ring','plain-iron-sword'];chance=.7;source=`Searching the defeated bandit ${record.name}'s abandoned belongings`;}
+ else if(proof.kind==='bond'){n=S.npcs?.[proof.npcId];const gifts={han:'empty-peak-manual',seo:'winter-moon-scroll',tang:'minor-meridian-manual',gwak:'wayfarer-staff-manual'};if(!n||n.location!==loc||!gifts[proof.npcId]||n.bond<10||n.trust<8||n.respect<5||n.sharedHistory<3)return none;key=`gift:${proof.npcId}`;pool=[gifts[proof.npcId]];source=`After your earned bond deepens, ${n.name} entrusts you with a personal teaching copy`;}
+ else return none;
+ const h=ensure(S);if(h.attempts.includes(key)||proof.kind==='bond'&&h.gifts[proof.npcId]||dayKey&&(h.days[dayKey]??-1)>=day)return none;h.attempts.push(key);h.attempts=h.attempts.slice(-256);if(dayKey)h.days[dayKey]=day;const roll=hash(`${S.seed}|items|${key}`);if(roll/4294967296>=chance)return none;const chosen=pool[hash(S.seed+'|'+key+'|which')%pool.length],c=get(chosen)||E.get(chosen);if(!E.acquire(p,c.id,1,c.type))return none;if(proof.kind==='bond')h.gifts[proof.npcId]={day,item:c.id};return {ok:true,id:key,source,items:[{id:c.id,name:c.name,qty:1}],text:`${source}, you receive ${c.name} ×1. It is now in your belongings.`};
+}
+const recipes=[{name:'Jade Clarity Pill',skill:4,mats:{'Moon Lotus':1,'Medicinal Root':2},desc:'Supports an earned breakthrough’s foundation.'},{name:'Still Water Pill',skill:4,mats:{'Jade Moss':1,'Wild Herbs':2},desc:'Settles stability after insight has been earned.'},{name:'Meridian Mending Pill',skill:6,mats:{'Snow Ginseng':1,'Healing Salve':1,'Medicinal Root':1},desc:'Treats a real injury; cannot be consumed for practice.'},{name:'Dewstone',skill:3,mats:{'Moon Lotus':1,'Spirit Stone':1},desc:'Stores one finite recovery charge.'},{name:'Cleansing Incense',skill:3,mats:{'Cinder Orchid':1,'Wild Herbs':2},desc:'Consumes rare herb scent to reduce existing deviation.'},{name:'Spirit Ink',skill:5,mats:{'Jade Moss':1,'Spirit Stone':1},desc:'Prepare mineral ink for talismans and spirit gear.'}];
+const api={catalog,get,ensure,acquire,use,resolveReward,recipes,herbLocations};root.MURIM_ITEMS=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(globalThis);

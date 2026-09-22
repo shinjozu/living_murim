@@ -1,0 +1,8 @@
+{
+  "name": "living-murim",
+  "version": "25.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server/narrator.cjs"
+  }
+}

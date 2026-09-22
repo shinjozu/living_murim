@@ -1,0 +1,24 @@
+.petPanel { margin-block:1.25rem; }
+.petPanel>p { max-width:70ch; color:var(--muted,#b1b5b5); }
+.petRoster { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:12px; }
+.petCard { display:grid; grid-template-columns:90px minmax(0,1fr); gap:12px; padding:12px; background:#0a1018; border:1px solid #74634660; border-radius:8px; }
+.petCard.equipped { border-color:#b59a61; background:#111b21; }
+.petCard>img { width:100%; aspect-ratio:1; object-fit:contain; align-self:start; }
+.petCard h4 { margin:0 0 4px; color:#e2d2ae; }
+.petCard p { margin:4px 0 9px; font-size:.88rem; line-height:1.5; }
+.petCard button { min-height:44px; margin:4px 4px 4px 0; }
+.petCard small { display:block; color:#b1b5b5; margin-top:4px; }
+.petGrowth { color:#c3d3ce; }
+.petStatus { min-height:1.5em; }
+.spiritPet { display:inline-block; width:clamp(64px,9vw,140px); aspect-ratio:1; pointer-events:none; transform-origin:50% 88%; }
+.spiritPet img { width:100%; height:100%; object-fit:contain; display:block; }
+.spiritPet--idle { animation:petBreath 4.8s ease-in-out infinite; }
+.spiritPet--support { animation:petSupport .8s ease-out both; }
+.spiritPet--crane.spiritPet--idle { animation-duration:6.4s; }
+.spiritPet--turtle.spiritPet--idle { animation-duration:7.2s; }
+@keyframes petBreath { 0%,100% { transform:translateY(0) scaleY(1); } 50% { transform:translateY(-1px) scaleY(1.012); } }
+@keyframes petSupport { 0% { transform:translateX(0); } 32% { transform:translateX(10px) translateY(-3px); } 100% { transform:translateX(0); } }
+@media(max-width:560px) { .petCard { grid-template-columns:70px minmax(0,1fr); padding:10px; gap:8px; } }
+@media(prefers-reduced-motion:reduce) { .spiritPet { animation:none; } }
+body.motion-reduced .spiritPet, .hidden .spiritPet { animation:none; }
+body.motion-fast .spiritPet--support { animation-duration:.28s; }

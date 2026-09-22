@@ -1,0 +1,201 @@
+/* Shared controls and game components. Geometry, creator, portraits, choreography,
+   guide, and responsive story layout belong to layout.css. */
+* { box-sizing:border-box }
+button { color:inherit;padding:8px 11px;-webkit-tap-highlight-color:transparent }
+button.active { border-color:var(--gold);color:var(--ivory);background:#283039 }
+input { width:100%;min-width:0;min-height:44px;padding:10px 12px;color:var(--ivory);background:#0b141d;border:1px solid #65717a;border-radius:3px }
+input[type="checkbox"], input[type="radio"] { width:20px;min-height:20px;accent-color:var(--gold) }
+label { display:grid;gap:6px;font-size:13px;color:#cbbfa9 }
+.hidden, [hidden] { display:none!important }
+.eyebrow { font:10px/1.5 system-ui;letter-spacing:.14em;color:var(--gold) }
+.prose { font-size:16px;line-height:1.6;color:#d9d9d1;overflow-wrap:anywhere }
+.prose p { margin:.45em 0 }
+.meters { min-width:0 }
+.meters span { overflow-wrap:anywhere }
+.statGrid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px }
+.card { min-width:0;overflow-wrap:anywhere }
+.card h3 { margin:0 0 8px }
+.card p, .card small { margin:4px 0 }
+.bar { overflow:hidden;margin-top:7px }
+.bar i { display:block;height:100%;max-width:100% }
+.tag, .fateBadge { display:inline-block;margin:3px;padding:4px 7px;border:1px solid #8f744c66;border-radius:3px;background:#0a141d;color:#d2c2aa;font:11px/1.4 system-ui;overflow-wrap:anywhere }
+.danger, .risk { color:#e2a69b }
+.good, .advantage { color:#a8c9ad }
+.muted { color:var(--muted) }
+.locked { opacity:.55 }
+.quest { border-left:3px solid #ab916c }
+.territory { border-left:3px solid #658881 }
+.timeline { border-left:2px solid #9d7c49;padding-left:12px;margin:10px 0 }
+.timeline small { color:#aaa79e }
+.callback { border-left:2px solid #a96863;padding-left:10px;color:#cfbba5 }
+.storyPrompt { font-style:italic;color:#b3ad9f }
+.memoryFlash { margin-top:10px;padding:8px 11px;border-left:2px solid #9d8054;background:#101921;color:#c6bcaa;font-size:13px;line-height:1.5 }
+.memoryFlash b { color:#dfc79f }
+.impact { padding:12px;border:1px solid var(--line);border-left:3px solid #b29970;background:#0b151f;margin:10px 0;font-size:13px;line-height:1.5;overflow-wrap:anywhere }
+.impact p { margin:5px 0 0;color:#b3b8b4;font-size:12px }
+.choice { display:block;width:100%;text-align:left }
+.choiceTitle, .choice em, .choiceSignal { display:block }
+.choice em { font-style:normal }
+.choiceSignal { margin-top:6px }
+.choice[data-v24-tone]:after { border:1px solid;border-radius:3px;letter-spacing:.1em;text-transform:uppercase }
+.choice[data-v24-tone="force"]:after { content:"Force";color:#e5a4a4;border-color:#a8494966 }
+.choice[data-v24-tone="insight"]:after { content:"Insight";color:#a9c9e7;border-color:#668eb666 }
+.choice[data-v24-tone="warmth"]:after { content:"Bond";color:#dfb9d8;border-color:#956c8e66 }
+.choice[data-v24-tone="craft"]:after { content:"Craft";color:#dfc897;border-color:#9a845566 }
+.choice[data-v24-tone="discipline"]:after { content:"Discipline";color:#b4d3b6;border-color:#708f7366 }
+.choice-compact .choiceSignal { display:none }
+.storyPager, .choicePager { display:flex;align-items:center;gap:6px;margin:8px 0 }
+.storyPager button, .choicePager button { flex:1;font-size:13px }
+.storyPager span { color:var(--muted);font-size:12px;text-align:center }
+.conversationExit { width:100%;margin-top:4px;background:transparent;border-style:dashed;color:#b8b3a9;text-align:center }
+#customAction { min-width:0 }
+#customForm button { white-space:nowrap }
+.fate small { display:block;margin-top:4px;color:#b7b3a8 }
+.fate.selected { border-color:var(--gold);background:#29271f }
+.fateGroup { margin:14px 0 }
+.fateGroup h3 { font-size:14px;color:#d0b07d }
+.fateRow { display:flex;gap:7px;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch }
+.fate { min-width:170px;text-align:left }
+.expressionChoices { display:flex;flex-wrap:wrap;gap:6px }
+.characterProfile small { display:block;margin-top:5px;color:#b7b9af }
+.characterProfile p { line-height:1.6;color:#b8c0bf }
+.itemActions { display:flex;flex-wrap:wrap;gap:6px;margin-top:8px }
+.itemActions button { flex:1;min-width:64px;font-size:13px }
+.relationship { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:8px }
+.relationship span { padding:5px;background:#09131c;border:1px solid #ffffff12;border-radius:3px;color:#bcb8aa;font:11px/1.4 system-ui;text-align:center }
+.bondTitle { color:#d7bc85;font-size:13px }
+.bondActions { gap:6px;margin-top:9px }
+.bondActions button { font-size:13px }
+.lifeActions { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:8px;margin:12px 0 22px }
+.lifeActions button { font-size:14px }
+.craftCard { margin:10px 0 }
+.statusStrip { color:#b8b7a8;font:12px/1.5 system-ui }
+.lineageGrid { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:14px }
+.artCard { align-content:start }
+.techniqueRow { margin-top:9px;padding:10px;border:1px solid var(--line);border-radius:3px;background:#0a151e }
+.techniqueRow>b, .techniqueRow>span { display:block }
+.techniqueRow>b { font-size:15px;color:#ded3bd }
+.techniqueRow>span { color:#b0b6b2;margin-top:4px;font-size:12px;line-height:1.5 }
+.worldPulse { margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:3px;background:#0d1820;color:#b8c0b8;font-size:13px;line-height:1.6 }
+.worldPulse b { color:#ddc79d;font-weight:400 }
+.climateCard { border-color:#6f819366 }
+.climateCard.resonant { border-color:#b8a36d88 }
+.commissionBoard { border-color:#8a6d4388 }
+.commissionRow { display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,1.2fr);gap:12px;padding:12px 0;border-top:1px solid #ffffff16 }
+.commissionRow:first-of-type { border-top:0 }
+.commissionRow b, .commissionRow small { display:block }
+.commissionRow small { margin-top:5px;color:#aeb2a7 }
+.commissionActions { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px }
+.commissionActions button { font-size:12px;line-height:1.4 }
+.masteryMemory { border-color:#647e6f66 }
+.modalCard h2 { margin:0 0 12px }
+.modalCard h3 { margin:14px 0 7px }
+.modalCard button { width:100%;margin-top:6px }
+
+/* Combat HUD and bounded overlays only. Actor movement belongs to choreography. */
+.combatModal #modalClose { display:none }
+.battleShell { display:grid;min-width:0 }
+.battleTop { display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,.9fr);gap:12px;align-items:start;border-bottom:1px solid var(--line) }
+.battleTop h2 { margin:3px 0;font-weight:400;color:#e5d2b0 }
+.battleEyebrow { display:block;color:var(--gold);font:10px/1.4 system-ui;letter-spacing:.14em;text-transform:uppercase }
+.enemyIntent { border-left:2px solid #9f8052;background:#0a1520;padding:8px 10px;min-width:0 }
+.enemyIntent span { display:block;color:#aeb3b3;font:10px/1.4 system-ui;text-transform:uppercase;letter-spacing:.08em }
+.enemyIntent b { display:block;color:#d8cfbc;font:12px/1.5 system-ui;margin-top:3px }
+.battleStage:before { content:"";position:absolute;inset:0;pointer-events:none;z-index:1 }
+.battleGround { position:absolute;left:0;right:0;z-index:2 }
+.battleMist { position:absolute;width:60%;height:42px;border-radius:50%;background:#d9cfb20c;filter:blur(9px);z-index:2;pointer-events:none }
+.mistA { left:-10%;top:32% }
+.mistB { right:-12%;top:58% }
+.fighter { position:absolute;min-width:0 }
+.fighterHud strong, .fighterHud span, .fighterHud small { display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap }
+.fighterHud span { color:#b9b7aa }
+.fighterHud small { color:#b8bdba;margin-top:3px }
+.battleBar { border:1px solid #ffffff25;background:#080f16;border-radius:3px;overflow:hidden;margin-top:4px }
+.battleBar i { display:block;height:100%;max-width:100%;transition:width .28s ease }
+.playerBar i { background:linear-gradient(90deg,#9d383d,#dc7979) }
+.enemyBar i { background:linear-gradient(90deg,#91343b,#d57478) }
+.qiBar { margin-top:5px }
+.qiBar i { background:linear-gradient(90deg,#37608e,#8ab9df) }
+.combatReadout { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px }
+.combatReadout span { color:#b9b8ad;border:1px solid var(--line);border-radius:3px;padding:7px;text-align:center;font:11px/1.5 system-ui }
+.combatReadout b { display:block;color:#ded3bf;font-size:12px }
+.combatLog div { color:#aeb7b8;padding:4px 0 }
+.combatLog .latest { color:#e0d6c4 }
+.combatActions button { margin:0;text-align:left;padding:9px 11px }
+.combatActions button b, .combatActions button small { display:block }
+.combatActions button b { font-size:14px;font-weight:400 }
+.combatActions button small { color:#b3b7b5;margin-top:4px;line-height:1.4;font-size:11px }
+.combatFlee { grid-column:1/-1;background:transparent;border-style:dashed }
+.damageNumber { position:absolute;z-index:15;font-size:24px;font-weight:600;color:#f2dcc5;text-shadow:0 2px 4px #000;pointer-events:none }
+.enemyDamage { right:22%;top:42% }
+.playerDamage { left:22%;top:42% }
+.fx-enemy-hit .enemyDamage { animation:damageRise .78s ease .22s both }
+.fx-player-hit .playerDamage { animation:damageRise .78s ease .64s both }
+.qiProjectile { position:absolute;left:26%;top:52%;width:26px;height:26px;border-radius:50%;z-index:8;background:radial-gradient(circle,#e4f2ff 0 18%,#78a9d8 28%,#5d79b244 62%,transparent 70%);box-shadow:0 0 18px #7aa8db;opacity:0;pointer-events:none }
+.fx-qi .qiProjectile { animation:qiFlight .72s ease .08s both }
+.fx-affinity-scorching .qiProjectile { background:radial-gradient(circle,#fff5c4,#e46d3d 30%,transparent 72%);box-shadow:0 0 23px #e56b3b }
+.fx-affinity-frost-silent .qiProjectile { background:radial-gradient(circle,#fff,#9cdbec 28%,transparent 72%);box-shadow:0 0 23px #9ad9ee }
+.fx-affinity-thunderstep .qiProjectile { border-radius:35% 65% 55% 45%;background:#e9f5ff;box-shadow:0 0 20px #8bb9ed }
+.fx-affinity-verdant-venom .qiProjectile { background:radial-gradient(circle,#e4ffc8,#6ea45c 30%,transparent 72%);box-shadow:0 0 23px #7fbd66 }
+.fx-affinity-hollow .qiProjectile { background:radial-gradient(circle,#ece4ff,#67517e 31%,transparent 72%);box-shadow:0 0 25px #8d72ab }
+.fx-affinity-unbound .qiProjectile { background:conic-gradient(#e7be68,#9c6fe0,#68bad4,#dc6a78,#e7be68);box-shadow:0 0 25px #d7b87d }
+@keyframes damageRise { 0% { opacity:0;transform:translateY(6px) } 25% { opacity:1 } 100% { opacity:0;transform:translateY(-30px) } }
+@keyframes qiFlight { 0% { opacity:0;left:26%;transform:scale(.6) } 20% { opacity:1 } 75% { opacity:1;left:70%;transform:scale(1.1) } 100% { opacity:0;left:75%;transform:scale(1.3) } }
+
+/* Weather stays inside artwork, behind actors and away from controls. */
+.battleStage:is(.weather-soft-rain,.weather-humid-rain,.weather-cold-rain,.weather-thunderstorm):before { background:repeating-linear-gradient(105deg,transparent 0 13px,#d7e6ef20 14px 15px,transparent 16px 29px);animation:weatherRain .72s linear infinite }
+.battleStage:is(.weather-light-snow,.weather-heavy-snow):before { background:radial-gradient(circle at 12% 18%,#fff8 0 2px,transparent 3px),radial-gradient(circle at 72% 63%,#fff6 0 2px,transparent 3px);background-size:120px 95px;animation:weatherSnow 2.2s linear infinite }
+.battleStage:is(.weather-river-mist,.weather-frost-fog):before { background:linear-gradient(90deg,transparent,#dbe5e31c 35%,#edf6f133 55%,transparent);animation:weatherFog 3.4s ease-in-out infinite alternate }
+@keyframes weatherRain { from { background-position:0 -24px } to { background-position:-20px 42px } }
+@keyframes weatherSnow { from { background-position:0 -30px } to { background-position:34px 100px } }
+@keyframes weatherFog { from { opacity:.35 } to { opacity:.72 } }
+
+/* Persistent action results, preferences, and sound settings. */
+#creation .originGroup h2 { margin:14px 0 7px;font-size:22px;font-weight:400;color:#e4ceb0 }
+#creation .creatorHint { margin:6px 0 12px;font-size:13px;line-height:1.5;color:#b7bfbb }
+#creation .originChoices { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px }
+#creation .originChoices .fate { min-width:0;min-height:90px;margin:0;white-space:normal }
+#creation .originChoices .fate b { display:block;font-size:15px;font-weight:400;line-height:1.35 }
+#creation .originChoices .fate.selected { background:#343025;border-color:#d5b582;box-shadow:inset 3px 0 0 #d5b582 }
+#creation .fateDetails summary { color:#e2ccaa;font-size:16px }
+#creation .fateDetails summary:after { content:"Optional";margin-left:12px;color:#9ba8ae;font:11px system-ui }
+#creation .creatorFateOptions { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-bottom:16px }
+#creation .creatorFateField { min-width:0 }
+#creation .creatorFateField label { font-size:14px }
+#creation .creatorFateField select { width:100%;min-width:0 }
+#creation .creatorFateEffect { margin:7px 0;font-size:12px;line-height:1.6;color:#b8c1bd }
+.v245ImpactHead { display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:8px }
+.v245ImpactHead b { font-weight:400;color:#ecd9b8;font-size:15px }
+.v245ImpactHead small { color:#afbdc0;font-size:11px }
+.v245Changes { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px }
+.v245Change { font:11px/1.4 system-ui;padding:4px 7px;border-radius:3px;border:1px solid #776344;background:#0a141d;color:#c9bda8 }
+.v245Change.gain { border-color:#5d896b;color:#b6dabd }
+.v245Change.cost { border-color:#974f50;color:#e3aaaa }
+.v245Change.thread { border-color:#6b7898;color:#b8c6e2 }
+.v246SoundPrefs { margin-top:18px;padding-top:16px;border-top:1px solid var(--line);display:grid;gap:12px }
+.v246SoundPrefs h3 { margin:0;color:#e5cda4 }
+.v246SoundPrefs label { display:grid;gap:7px }
+.musicVolumeRow { display:grid;grid-template-columns:minmax(0,1fr) 54px;gap:10px;align-items:center }
+.musicVolumeRow input[type="range"] { width:100%;accent-color:#caa35f;min-height:44px }
+.musicVolumeRow output { font-variant-numeric:tabular-nums;text-align:right;color:#e6c98f }
+.musicTracks { display:flex;gap:10px;flex-wrap:wrap }
+.musicTracks span { padding:7px 10px;border:1px solid var(--line);border-radius:3px;background:#0a141d;font-size:13px;color:#d8d9df }
+.motion-fast .qiProjectile { animation-duration:.3s }
+.motion-reduced .qiProjectile { display:none }
+.motion-reduced .damageNumber, .motion-reduced .battleStage:before { animation:none;transition:none }
+@media(max-width:600px) {
+ #creation .originChoices { grid-template-columns:repeat(2,minmax(0,1fr));gap:7px }
+ #creation .originChoices .fate { padding:10px;min-height:94px }
+ #creation .originChoices .fate b { font-size:14px }
+ #creation .creatorFateOptions { grid-template-columns:1fr }
+ .commissionRow { grid-template-columns:1fr }
+ .commissionActions { grid-template-columns:1fr }
+ .v245ImpactHead { align-items:start;flex-direction:column;gap:3px }
+ .musicTracks { display:grid }
+ .musicTracks span { width:100% }
+}
+@media(prefers-reduced-motion:reduce) {
+ .damageNumber, .battleStage:is([class*="weather-"]):before { animation:none }
+ .battleBar i { transition:none }
+ .qiProjectile { display:none }
+}
